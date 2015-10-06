@@ -16,15 +16,15 @@ This plugin is designed to be plug-and-play. By default, the plugin will try and
 
 ####Container Import (recommended)
 
-1. Download the file 'gascroll-gtm-import.json' from this repository.
+1. Download the file 'lunametrics-scroll-tracking-gtm-import.json' from this repository.
 2. In Google Tag Manager, navigate to the **Admin** tab.
 3. Under the **Container** column, select **Import Container**.
-4. Click **Choose Container File** and select the 'gascroll-gtm-import.json' file you downloaded.
+4. Click **Choose Container File** and select the 'lunametrics-scroll-tracking-gtm-import.json' file you downloaded.
 5. Select **Merge** from the radio selector beneath the Choose Container File button.
 6. Select **Rename** from the radio selector that appears beneath the Merge selector.
 7. Click Continue, then Confirm.
-8. Navigate to the **Variables** interface, and select **Scroll Tracking - UA Number** from the User-Defined Variables table.
-9. Click anywhere in the **Configure Variable** section and change **UA-XXXXXX-YY** to **your** Google Analytics UA Number, then save your changes.
+8. Navigate to the Tags interface - select the tag imported tag named GA Event - Scroll Tracking.
+9. Change the {{YOUR_GA_TRACKING_ID}} in the **Tracking ID** field to your Google Analytics Tracking ID (a.k.a. UA Number).
 
 Once you publish your next container, scroll tracking will begin working immediately.
 
@@ -33,7 +33,7 @@ Once you publish your next container, scroll tracking will begin working immedia
 ####Manual Installation (not recommended)
 
 #####Adding the Script
-1. In Google Tag Manager, create a new Custom HTML tag.
+1. In Google Tag Manager, create a new Custom HTML tag. Name it 'CU LunaMetrics Scroll Tracking Plugin'.
 2. Copy the below into the blank Custom HTML tag:
 
     <script type="text/javascript" id="gtm-scroll-tracking">
@@ -47,7 +47,7 @@ Once you publish your next container, scroll tracking will begin working immedia
 #####Configuring GTM
 Create the following Trigger in Google Tag Manager:
 
-* Trigger Name: Luna Scroll Tracking Event
+* Trigger Name: lunaScrollTracking Event Fired
   - Trigger Type: Custom Event
   - Event Name: lunaScrollTracking
 
@@ -63,7 +63,7 @@ Create the following Variables in Google Tag Manager:
 
 Create the following Tag in Google Tag Manager:
 
-* Tag Name: GA Event - LunaMetrics Scroll Tracking
+* Tag Name: GA Event - Scroll Tracking
   - Tag Type: Google Analytics
   - Choose A Tag Type: Universal Analytics 
   - Tracking ID: *&lt; Enter your Google Analytics Tracking ID (UA Number)*&gt;
@@ -71,10 +71,15 @@ Create the following Tag in Google Tag Manager:
   - Category: Scroll Tracking
   - Action: {{luna.scrollTracking.distance}}
   - Label: {{luna.scrollTracking.label}}
+  - Non-interaction Hit: True
+  - More Settings:
+    - Fields to Set:
+      - Field Name: cookieDomain
+      - Field Value: auto
   - Fire On: More
     - Choose From Existing Triggers: Luna Scroll Tracking Event
 
-Ensure all other settings match existing Event tags in the container (e.g., cookieDomain is set properly).
+Please ensure that other tracker settings are uniform in this event, as with your primary tracker (e.g. function name, cookie name, etc.). **Differences between Google Analytics tags in a container can cause difficult to debug tracking inconsistencies**.
 
 ###Universal Analytics/Classic Analytics Installation
 To install the Scroll Tracking script on non-GTM implementations, simply include the script in the &lt;head&gt; section of every page you'd like to track. You'll need to host the script on your own server, then include it using a &lt;script&gt; tag that looks something like this:
