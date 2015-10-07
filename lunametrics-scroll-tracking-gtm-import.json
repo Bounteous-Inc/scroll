@@ -14,208 +14,160 @@
             "timeZoneCountryId": "US",
             "timeZoneId": "America/Los_Angeles",
             "notes": "",
-            "usageContext": [
-                "WEB"
-            ],
+            "usageContext": ["WEB"],
             "fingerprint": "1444172625709"
         },
-        "tag": [
-            {
-                "accountId": "28896164",
-                "containerId": "1572666",
-                "tagId": "7",
-                "name": "CU LunaMetrics Scroll Tracking Plugin",
-                "type": "html",
-                "liveOnly": false,
-                "parameter": [
-                    {
-                        "type": "BOOLEAN",
-                        "key": "supportDocumentWrite",
-                        "value": "false"
-                    },
-                    {
+        "tag": [{
+            "accountId": "28896164",
+            "containerId": "1572666",
+            "tagId": "7",
+            "name": "CU LunaMetrics Scroll Tracking Plugin",
+            "type": "html",
+            "liveOnly": false,
+            "parameter": [{
+                "type": "BOOLEAN",
+                "key": "supportDocumentWrite",
+                "value": "false"
+            }, {
+                "type": "TEMPLATE",
+                "key": "html",
+                "value": "<script type=\"text/javascript\" id=\"gtm-scroll-tracking\">\n;(function(document, window, config) {\n\n  var cache = {};\n\n  // If our document is ready to go, fire straight away\n  if(document.readyState !== 'loading') {\n\n    init();\n\n  } else {\n\n    // On IE8 this fires on window.load, all other browsers will fire when DOM ready\n    document.addEventListener ? \n      addEvent(document, 'DOMContentLoaded', init) : \n      addEvent(window, 'load', init);\n\n  }\n\n  function init() {\n\n    // Browser dependencies, script fails silently\n    if (!document.querySelector || !document.body.getBoundingClientRect) {\n\n      return false;\n\n    }\n\n    // Set our dataLayer name for later\n    config.dataLayerName = config.dataLayerName || 'dataLayer';\n\n    // Initialize our distances, for later\n    config.distances = config.distances || {};\n\n    checkDepth();\n    addEvent(window, 'scroll', throttle(checkDepth, 500));\n\n  }\n\n  function getMarks(_docHeight, _offset) {\n\n    var marks = {};\n    var percents = [];\n    var pixels = [];\n\n    if(config.distances.percentages) {\n\n      if(config.distances.percentages.each) {\n\n        percents = percents.concat(config.distances.percentages.each);\n\n      }\n\n      if(config.distances.percentages.every) {\n\n        var _everyPercent = every_(config.distances.percentages.every, 100);\n        percents = percents.concat(_everyPercent);\n\n      }\n\n    }\n\n    if(config.distances.pixels) {\n\n      if(config.distances.pixels.each) {\n\n        pixels = pixels.concat(config.distances.pixels.each);\n\n      }\n\n      if(config.distances.pixels.every) {\n\n        var _everyPixel = every_(config.distances.pixels.every, _docHeight);\n        pixels = pixels.concat(_everyPixel);\n\n      }\n\n    }\n\n    marks = addMarks_(marks, percents, '%', _docHeight, _offset);\n    marks = addMarks_(marks, pixels, 'px', _docHeight, _offset);\n\n    return marks;\n\n  }\n\n  function addMarks_(marks, points, symbol, _docHeight, _offset) {\n\n    var i;\n\n    for(i = 0; i < points.length; i++) {\n\n      var _point = parseInt(points[i], 10);\n      var height = symbol !== '%' ? _point + _offset : _docHeight * (_point / 100) + _offset;\n      var mark = _point + symbol;\n\n      if(height <= _docHeight + _offset) {\n\n        marks[mark] = height;\n\n      }\n\n    }\n\n    return marks;\n\n  }\n\n  function every_(n, total) {\n\n    var _n = parseInt(n, 10);\n    var _num = total / _n;\n    var arr = [];\n    \n    for(i = 1; i < _num + 1; i++) {\n\n      arr.push(i * _n);\n\n    }\n\n    return arr;\n\n  }\n\n  function checkDepth() {\n\n    var _bottom = parseBorder_(config.bottom);\n    var _top = parseBorder_(config.top);\n\n    var height = docHeight(_bottom, _top);\n    var marks = getMarks(height, (_top || 0));\n    var _curr = currentPosition();\n    var key;\n\n    for(key in marks) {\n\n      if(_curr > marks[key] && !cache[key]) {\n\n        cache[key] = true;\n        fireAnalyticsEvent(key);\n\n      }\n\n    }\n\n  }\n\n  function fireAnalyticsEvent(distance) {\n\n    var _ga = window.GoogleAnalyticsObject;\n\n    if(typeof window[config.dataLayerName] !== 'undefined' && !config.forceSyntax) { \n\n      window[config.dataLayerName].push( {\n        'event': 'lunaScrollTracking',\n        'luna': {\n          'scrollTracking': {\n            'distance': distance,\n            'label': config.label\n          }\n        }\n      });\n\n    } else if (typeof window[_ga] === 'function' && \n              typeof window[_ga].getAll === 'function' && \n              config.forceSyntax !== 2) \n    {\n\n      window[_ga]('send', 'event', config.category, distance, config.label, {'nonInteraction': 1});\n\n    } else if(typeof window._gaq !== 'undefined' && config.forceSyntax !== 1) {\n\n      window._gaq.push(['_trackEvent', config.category, distance, config.label, 0, true]);\n\n    }\n\n  }\n\n  function parseBorder_(border) {\n\n    if(typeof border === 'number' || parseInt(border, 10)) {\n\n      return parseInt(border, 10);\n\n    }\n\n    try {\n\n      // If we have an element or a query selector, poll getBoundingClientRect\n      var el = border.nodeType === 1 ? border : document.querySelector(border);\n      var docTop = document.body.getBoundingClientRect().top;\n      var _elTop = Math.floor(el.getBoundingClientRect().top - docTop);\n\n      return _elTop;\n\n    } catch (e) {\n\n      return void(0);\n\n    }\n\n  }\n\n  // Adapted from https://developer.mozilla.org/en-US/docs/Web/API/Window/scrollY\n  function currentPosition() {\n\n    var supportPageOffset = window.pageXOffset !== undefined;\n    var isCSS1Compat = ((document.compatMode || \"\") === \"CSS1Compat\");\n\n    var currScrollTop = supportPageOffset ?\n                        window.pageYOffset :\n                        isCSS1Compat ?\n                          document.documentElement.scrollTop :\n                          document.body.scrollTop;\n\n    return parseInt(currScrollTop, 10) + parseInt(viewportHeight(), 10);\n\n  }\n\n  function viewportHeight() {\n\n    var elem = (document.compatMode === \"CSS1Compat\") ?\n              document.documentElement :\n              document.body;\n\n    return elem.clientHeight;\n\n  }\n\n  function docHeight(_bottom, _top) {\n\n    var body = document.body;\n    var html = document.documentElement;\n    \n    var height = Math.max(body.scrollHeight, body.offsetHeight, \n                      html.clientHeight, html.scrollHeight, html.offsetHeight);\n\n\n    if(_top) {\n\n      height = height - _top;\n\n    }\n\n    if(_bottom) {\n\n      height = _bottom - _top;\n\n    }\n\n    return height - 5;\n\n  }\n\n  /*\n  * Throttle function borrowed from:\n  * Underscore.js 1.5.2\n  * http://underscorejs.org\n  * (c) 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors\n  * Underscore may be freely distributed under the MIT license.\n  */\n  function throttle(func, wait) {\n    var context, args, result;\n    var timeout = null;\n    var previous = 0;\n    var later = function() {\n      previous = new Date;\n      timeout = null;\n      result = func.apply(context, args);\n    };\n    return function() {\n      var now = new Date;\n      if (!previous) previous = now;\n      var remaining = wait - (now - previous);\n      context = this;\n      args = arguments;\n      if (remaining <= 0) {\n        clearTimeout(timeout);\n        timeout = null;\n        previous = now;\n        result = func.apply(context, args);\n      } else if (!timeout) {\n        timeout = setTimeout(later, remaining);\n      }\n      return result;\n    };\n  }\n\n  // Cross-browser compliant event listener\n  function addEvent(el, evt, fn) {\n\n    if (el.addEventListener) {\n\n      el.addEventListener(evt, fn);\n\n    } else if (el.attachEvent) {\n\n      el.attachEvent('on' + evt, function(evt) {\n\n        // Call the event to ensure uniform 'this' handling, pass it event\n        fn.call(el, evt);\n\n      });\n\n    } else if (typeof el['on' + evt] === 'undefined' || el['on' + evt] === null) {\n\n      el['on' + evt] = function(evt) {\n\n        // Call the event to ensure uniform 'this' handling, pass it event\n        fn.call(el, evt);\n\n      };\n\n    }\n\n  }\n\n})(document, window, {\n  // Use 2 to force Classic Analytics hits and 1 for Universal hits\n  'forceSyntax': false,\n  // False if you just use the default dataLayer variable, otherwise enter it here\n  'dataLayerName': false,\n  'distances': {\n    // Configure percentages of page you'd like to see if users scroll past\n    'percentages': {\n      'each': [10,90],\n      'every': 25\n    },\n    // Configure for pixel measurements of page you'd like to see if users scroll past\n    'pixels': {\n      'each': [],\n      'every': null\n    }\n  },\n  // Accepts a number, DOM element, or query selector to determine the top of the scrolling area\n  'top': null,\n  // Accepts a number, DOM element, or query selector to determine the bottom of the scrolling area\n  'bottom': null,\n  // Text for Event Category\n  'category': 'Scroll Tracking',\n  // Text for Event Label\n  'label': document.location.pathname\n});\n/*\n * v0.1.0\n * Created by the honest folks at @LunaMetrics, written by @notdanwilkerson\n * Documentation: https://github.com/lunametrics/gascroll/\n * Licensed under the Creative Commons 4.0 Attribution Public License\n */\n</script>"
+            }],
+            "fingerprint": "0",
+            "firingTriggerId": ["2147479553"],
+            "tagFiringOption": "ONCE_PER_EVENT"
+        }, {
+            "accountId": "28896164",
+            "containerId": "1572666",
+            "tagId": "8",
+            "name": "GA Event - Scroll Tracking",
+            "type": "ua",
+            "liveOnly": false,
+            "parameter": [{
+                "type": "BOOLEAN",
+                "key": "enableEcommerce",
+                "value": "false"
+            }, {
+                "type": "BOOLEAN",
+                "key": "setTrackerName",
+                "value": "false"
+            }, {
+                "type": "LIST",
+                "key": "fieldsToSet",
+                "list": [{
+                    "type": "MAP",
+                    "map": [{
                         "type": "TEMPLATE",
-                        "key": "html",
-                        "value": "<script type=\"text/javascript\" id=\"gtm-scroll-tracking\">\n  ;(function(document, window, config) {\n\n    var cache = {};\n\n    // If our document is ready to go, fire straight away\n    if(document.readyState === 'complete') {\n\n      init();\n\n    } else {\n\n      // On IE8 this fires on window.load, all other browsers will fire when DOM ready\n      document.addEventListener ? \n        addEvent(document, 'DOMContentLoaded', init) : \n        addEvent(window, 'load', init);\n\n    }\n\n    function init() {\n\n      // Browser dependencies, script fails silently\n      if (!document.querySelector || !document.body.getBoundingClientRect) {\n\n        return false;\n\n      }\n\n      // Set our dataLayer name for later\n      config.dataLayerName = config.dataLayerName || 'dataLayer';\n\n      // Initialize our distances, for later\n      config.distances = config.distances || {};\n\n      checkDepth();\n      addEvent(window, 'scroll', throttle(checkDepth, 500));\n\n    }\n\n    function getMarks(_docHeight, _offset) {\n\n\n      var marks = {};\n      var percents = [];\n      var pixels = [];\n\n      if(config.distances.percentages) {\n\n        if(config.distances.percentages.each) {\n\n          percents = percents.concat(config.distances.percentages.each);\n\n        }\n\n        if(config.distances.percentages.every) {\n\n          var _everyPercent = every_(config.distances.percentages.every, 100);\n          percents = percents.concat(_everyPercent);\n\n        }\n\n      }\n\n      if(config.distances.pixels) {\n\n        if(config.distances.pixels.each) {\n\n          pixels = pixels.concat(config.distances.pixels.each);\n\n        }\n\n        if(config.distances.pixels.every) {\n\n          var _everyPixel = every_(config.distances.pixels.every, _docHeight);\n          pixels = pixels.concat(_everyPixel);\n\n        }\n\n      }\n\n      marks = addMarks_(marks, percents, '%', _docHeight, _offset);\n      marks = addMarks_(marks, pixels, 'px', _docHeight, _offset);\n\n      return marks;\n\n    }\n\n    function addMarks_(marks, points, symbol, _docHeight, _offset) {\n\n      var i;\n\n      for(i = 0; i < points.length; i++) {\n\n        var _point = parseInt(points[i], 10);\n        var height = symbol !== '%' ? _point + _offset : _docHeight * (_point / 100) + _offset;\n        var mark = _point + symbol;\n\n        if(height <= _docHeight + _offset) {\n\n          marks[mark] = height;\n\n        }\n\n      }\n\n      return marks;\n\n    }\n\n    function every_(n, total) {\n\n      var _n = parseInt(n, 10);\n      var _num = total / _n;\n      var arr = [];\n\n      for(i = 1; i < _num + 1; i++) {\n\n        arr.push(i * _n);\n\n      }\n\n      return arr;\n\n    }\n\n    function checkDepth() {\n\n      var _bottom = parseBorder_(config.bottom);\n      var _top = parseBorder_(config.top);\n\n      var height = docHeight(_bottom, _top);\n      var marks = getMarks(height, (_top || 0));\n      var _curr = currentPosition();\n      var key;\n\n      for(key in marks) {\n\n        if(_curr > marks[key] && !cache[key]) {\n\n          cache[key] = true;\n          fireAnalyticsEvent(key);\n\n        }\n\n      }\n\n    }\n\n    function fireAnalyticsEvent(distance) {\n\n      var _ga = window.GoogleAnalyticsObject;\n\n      if(typeof window[config.dataLayerName] !== 'undefined' && !config.forceSyntax) { \n\n        window[config.dataLayerName].push( {\n          'event': 'lunaScrollTracking',\n          'luna': {\n            'scrollTracking': {\n              'distance': distance,\n              'label': config.label\n            }\n          }\n        });\n\n      } else if (typeof window[_ga] === 'function' && \n                typeof window[_ga].getAll === 'function' && \n                config.forceSyntax !== 2) \n      {\n\n        window[_ga]('send', 'event', config.category, distance, config.label, {'nonInteraction': 1});\n\n      } else if(typeof window._gaq !== 'undefined' && config.forceSyntax !== 1) {\n\n        window._gaq.push(['_trackEvent', config.category, distance, config.label, 0, true]);\n\n      }\n\n    }\n\n    function parseBorder_(border) {\n\n      if(typeof border === 'number' || parseInt(border, 10)) {\n\n        return parseInt(border, 10);\n\n      }\n\n      try {\n\n        // If we have an element or a query selector, poll getBoundingClientRect\n        var el = border.nodeType === 1 ? border : document.querySelector(border);\n        var docTop = document.body.getBoundingClientRect().top;\n        var _elTop = Math.floor(el.getBoundingClientRect().top - docTop);\n\n        return _elTop;\n\n      } catch (e) {\n\n        return void(0);\n\n      }\n\n    }\n\n    // Adapted from https://developer.mozilla.org/en-US/docs/Web/API/Window/scrollY\n    function currentPosition() {\n\n      var supportPageOffset = window.pageXOffset !== undefined;\n      var isCSS1Compat = ((document.compatMode || \"\") === \"CSS1Compat\");\n\n      var currScrollTop = supportPageOffset ?\n                          window.pageYOffset :\n                          isCSS1Compat ?\n                            document.documentElement.scrollTop :\n                            document.body.scrollTop;\n\n      return parseInt(currScrollTop, 10) + parseInt(viewportHeight(), 10);\n\n    }\n\n    function viewportHeight() {\n\n      var elem = (document.compatMode === \"CSS1Compat\") ?\n                document.documentElement :\n                document.body;\n\n      return elem.clientHeight;\n\n    }\n\n    function docHeight(_bottom, _top) {\n\n      var body = document.body;\n      var html = document.documentElement;\n\n      var height = Math.max(body.scrollHeight, body.offsetHeight, \n                        html.clientHeight, html.scrollHeight, html.offsetHeight);\n\n\n      if(_top) {\n\n        height = height - _top;\n\n      }\n\n      if(_bottom) {\n\n        height = _bottom - _top;\n\n      }\n\n      return height - 5;\n\n    }\n\n    /*\n    * Throttle function borrowed from:\n    * Underscore.js 1.5.2\n    * http://underscorejs.org\n    * (c) 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors\n    * Underscore may be freely distributed under the MIT license.\n    */\n    function throttle(func, wait) {\n      var context, args, result;\n      var timeout = null;\n      var previous = 0;\n      var later = function() {\n        previous = new Date;\n        timeout = null;\n        result = func.apply(context, args);\n      };\n      return function() {\n        var now = new Date;\n        if (!previous) previous = now;\n        var remaining = wait - (now - previous);\n        context = this;\n        args = arguments;\n        if (remaining <= 0) {\n          clearTimeout(timeout);\n          timeout = null;\n          previous = now;\n          result = func.apply(context, args);\n        } else if (!timeout) {\n          timeout = setTimeout(later, remaining);\n        }\n        return result;\n      };\n    }\n\n    // Cross-browser compliant event listener\n    function addEvent(el, evt, fn) {\n\n      if (el.addEventListener) {\n\n        el.addEventListener(evt, fn);\n\n      } else if (el.attachEvent) {\n\n        el.attachEvent('on' + evt, function(evt) {\n\n          // Call the event to ensure uniform 'this' handling, pass it event\n          fn.call(el, evt);\n\n        });\n\n      } else if (typeof el['on' + evt] === 'undefined' || el['on' + evt] === null) {\n\n        el['on' + evt] = function(evt) {\n\n          // Call the event to ensure uniform 'this' handling, pass it event\n          fn.call(el, evt);\n\n        };\n\n      }\n\n    }\n\n  })(document, window, {\n    // Use 2 to force Classic Analytics hits and 1 for Universal hits\n    'forceSyntax': false,\n    // False if you just use the default dataLayer variable, otherwise enter it here\n    'dataLayerName': false,\n    'distances': {\n      // Configure percentages of page you'd like to see if users scroll past\n      'percentages': {\n        'each': [10,90],\n        'every': 25\n      },\n      // Configure for pixel measurements of page you'd like to see if users scroll past\n      'pixels': {\n        'each': [],\n        'every': null\n      }\n    },\n    // Accepts a number, DOM element, or query selector to determine the top of the scrolling area\n    'top': null,\n    // Accepts a number, DOM element, or query selector to determine the bottom of the scrolling area\n    'bottom': null,\n    // Text for Event Category\n    'category': 'Scroll Tracking',\n    // Text for Event Label\n    'label': document.location.pathname\n  });\n  /*\n   * v0.1.0\n   * Created by the honest folks at @LunaMetrics, written by @notdanwilkerson\n   * Documentation: https://github.com/lunametrics/gascroll/\n   * Licensed under the Creative Commons 4.0 Attribution Public License\n   */\n</script>"
-                    }
-                ],
-                "fingerprint": "0",
-                "firingTriggerId": [
-                    "2147479553"
-                ],
-                "tagFiringOption": "ONCE_PER_EVENT"
-            },
-            {
-                "accountId": "28896164",
-                "containerId": "1572666",
-                "tagId": "8",
-                "name": "GA Event - Scroll Tracking",
-                "type": "ua",
-                "liveOnly": false,
-                "parameter": [
-                    {
-                        "type": "BOOLEAN",
-                        "key": "enableEcommerce",
-                        "value": "false"
-                    },
-                    {
-                        "type": "BOOLEAN",
-                        "key": "setTrackerName",
-                        "value": "false"
-                    },
-                    {
-                        "type": "LIST",
-                        "key": "fieldsToSet",
-                        "list": [
-                            {
-                                "type": "MAP",
-                                "map": [
-                                    {
-                                        "type": "TEMPLATE",
-                                        "key": "fieldName",
-                                        "value": "cookieDomain"
-                                    },
-                                    {
-                                        "type": "TEMPLATE",
-                                        "key": "value",
-                                        "value": "auto"
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "type": "BOOLEAN",
-                        "key": "doubleClick",
-                        "value": "false"
-                    },
-                    {
-                        "type": "BOOLEAN",
-                        "key": "useDebugVersion",
-                        "value": "false"
-                    },
-                    {
+                        "key": "fieldName",
+                        "value": "cookieDomain"
+                    }, {
                         "type": "TEMPLATE",
-                        "key": "trackingId",
-                        "value": "{{YOUR_GA_TRACKING_ID}}"
-                    },
-                    {
-                        "type": "TEMPLATE",
-                        "key": "trackType",
-                        "value": "TRACK_EVENT"
-                    },
-                    {
-                        "type": "BOOLEAN",
-                        "key": "nonInteraction",
-                        "value": "true"
-                    },
-                    {
-                        "type": "BOOLEAN",
-                        "key": "enableLinkId",
-                        "value": "false"
-                    },
-                    {
-                        "type": "TEMPLATE",
-                        "key": "eventLabel",
-                        "value": "{{luna.scrollTracking.label}}"
-                    },
-                    {
-                        "type": "TEMPLATE",
-                        "key": "eventAction",
-                        "value": "{{luna.scrollTracking.distance}}"
-                    },
-                    {
-                        "type": "TEMPLATE",
-                        "key": "eventCategory",
-                        "value": "Scroll Tracking"
-                    }
-                ],
-                "fingerprint": "0",
-                "firingTriggerId": [
-                    "7"
-                ],
-                "tagFiringOption": "ONCE_PER_EVENT"
-            }
-        ],
+                        "key": "value",
+                        "value": "auto"
+                    }]
+                }]
+            }, {
+                "type": "BOOLEAN",
+                "key": "doubleClick",
+                "value": "false"
+            }, {
+                "type": "BOOLEAN",
+                "key": "useDebugVersion",
+                "value": "false"
+            }, {
+                "type": "TEMPLATE",
+                "key": "trackingId",
+                "value": "{{YOUR_GA_TRACKING_ID}}"
+            }, {
+                "type": "TEMPLATE",
+                "key": "trackType",
+                "value": "TRACK_EVENT"
+            }, {
+                "type": "BOOLEAN",
+                "key": "nonInteraction",
+                "value": "true"
+            }, {
+                "type": "BOOLEAN",
+                "key": "enableLinkId",
+                "value": "false"
+            }, {
+                "type": "TEMPLATE",
+                "key": "eventLabel",
+                "value": "{{luna.scrollTracking.label}}"
+            }, {
+                "type": "TEMPLATE",
+                "key": "eventAction",
+                "value": "{{luna.scrollTracking.distance}}"
+            }, {
+                "type": "TEMPLATE",
+                "key": "eventCategory",
+                "value": "Scroll Tracking"
+            }],
+            "fingerprint": "0",
+            "firingTriggerId": ["7"],
+            "tagFiringOption": "ONCE_PER_EVENT"
+        }],
         "fingerprint": "0",
-        "trigger": [
-            {
-                "accountId": "28896164",
-                "containerId": "1572666",
-                "triggerId": "7",
-                "name": "lunaScrollTracking Event Fired",
-                "type": "CUSTOM_EVENT",
-                "customEventFilter": [
-                    {
-                        "type": "EQUALS",
-                        "parameter": [
-                            {
-                                "type": "TEMPLATE",
-                                "key": "arg0",
-                                "value": "{{_event}}"
-                            },
-                            {
-                                "type": "TEMPLATE",
-                                "key": "arg1",
-                                "value": "lunaScrollTracking"
-                            }
-                        ]
-                    }
-                ],
-                "fingerprint": "0"
-            }
-        ],
-        "variable": [
-            {
-                "accountId": "28896164",
-                "containerId": "1572666",
-                "variableId": "25",
-                "name": "luna.scrollTracking.distance",
-                "type": "v",
-                "parameter": [
-                    {
-                        "type": "BOOLEAN",
-                        "key": "setDefaultValue",
-                        "value": "false"
-                    },
-                    {
-                        "type": "TEMPLATE",
-                        "key": "name",
-                        "value": "luna.scrollTracking.distance"
-                    },
-                    {
-                        "type": "INTEGER",
-                        "key": "dataLayerVersion",
-                        "value": "2"
-                    }
-                ],
-                "fingerprint": "0"
-            },
-            {
-                "accountId": "28896164",
-                "containerId": "1572666",
-                "variableId": "26",
-                "name": "luna.scrollTracking.label",
-                "type": "v",
-                "parameter": [
-                    {
-                        "type": "BOOLEAN",
-                        "key": "setDefaultValue",
-                        "value": "false"
-                    },
-                    {
-                        "type": "TEMPLATE",
-                        "key": "name",
-                        "value": "luna.scrollTracking.label"
-                    },
-                    {
-                        "type": "INTEGER",
-                        "key": "dataLayerVersion",
-                        "value": "2"
-                    }
-                ],
-                "fingerprint": "0"
-            }
-        ]
+        "trigger": [{
+            "accountId": "28896164",
+            "containerId": "1572666",
+            "triggerId": "7",
+            "name": "lunaScrollTracking Event Fired",
+            "type": "CUSTOM_EVENT",
+            "customEventFilter": [{
+                "type": "EQUALS",
+                "parameter": [{
+                    "type": "TEMPLATE",
+                    "key": "arg0",
+                    "value": "{{_event}}"
+                }, {
+                    "type": "TEMPLATE",
+                    "key": "arg1",
+                    "value": "lunaScrollTracking"
+                }]
+            }],
+            "fingerprint": "0"
+        }],
+        "variable": [{
+            "accountId": "28896164",
+            "containerId": "1572666",
+            "variableId": "25",
+            "name": "luna.scrollTracking.distance",
+            "type": "v",
+            "parameter": [{
+                "type": "BOOLEAN",
+                "key": "setDefaultValue",
+                "value": "false"
+            }, {
+                "type": "TEMPLATE",
+                "key": "name",
+                "value": "luna.scrollTracking.distance"
+            }, {
+                "type": "INTEGER",
+                "key": "dataLayerVersion",
+                "value": "2"
+            }],
+            "fingerprint": "0"
+        }, {
+            "accountId": "28896164",
+            "containerId": "1572666",
+            "variableId": "26",
+            "name": "luna.scrollTracking.label",
+            "type": "v",
+            "parameter": [{
+                "type": "BOOLEAN",
+                "key": "setDefaultValue",
+                "value": "false"
+            }, {
+                "type": "TEMPLATE",
+                "key": "name",
+                "value": "luna.scrollTracking.label"
+            }, {
+                "type": "INTEGER",
+                "key": "dataLayerVersion",
+                "value": "2"
+            }],
+            "fingerprint": "0"
+        }]
     }
 }

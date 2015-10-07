@@ -3,7 +3,7 @@
   var cache = {};
 
   // If our document is ready to go, fire straight away
-  if(document.readyState === 'complete') {
+  if(document.readyState !== 'loading') {
 
     init();
 
@@ -37,7 +37,6 @@
   }
 
   function getMarks(_docHeight, _offset) {
-
 
     var marks = {};
     var percents = [];
