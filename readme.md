@@ -16,10 +16,10 @@ This plugin is designed to be plug-and-play. By default, the plugin will try and
 
 ####Container Import (recommended)
 
-1. Download the file 'lunametrics-scroll-tracking-gtm-import.json' from this repository.
+1. Download the file 'luna-scroll-tracking.json' from this repository.
 2. In Google Tag Manager, navigate to the **Admin** tab.
 3. Under the **Container** column, select **Import Container**.
-4. Click **Choose Container File** and select the 'lunametrics-scroll-tracking-gtm-import.json' file you downloaded.
+4. Click **Choose Container File** and select the 'luna-scroll-tracking.json' file you downloaded.
 5. Select **Merge** from the radio selector beneath the Choose Container File button.
 6. Select **Rename** from the radio selector that appears beneath the Merge selector.
 7. Click Continue, then Confirm.

@@ -46,7 +46,7 @@ module.exports = function(grunt) {
       options: {
         build: {
           src: './lunametrics-scroll-tracking.gtm.js',
-          dest: './lunametrics-scroll-tracking-gtm-import.json'
+          dest: './luna-scroll-tracking.json'
         }
       }
     }
