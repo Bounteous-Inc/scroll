@@ -1,6 +1,6 @@
 {
     "exportFormatVersion": 1.3,
-    "exportTime": "2015-10-16 19:32:41",
+    "exportTime": "2015-10-16 20:33:36",
     "containerVersion": {
         "accountId": "28896164",
         "containerId": "1607357",
@@ -15,13 +15,13 @@
             "timeZoneId": "America/Los_Angeles",
             "notes": "",
             "usageContext": ["WEB"],
-            "fingerprint": "1445023944025",
+            "fingerprint": "1445027600600",
             "enabledBuiltInVariable": ["DEBUG_MODE"]
         },
         "tag": [{
             "accountId": "28896164",
             "containerId": "1607357",
-            "tagId": "15",
+            "tagId": "19",
             "name": "CU - Scroll Tracking - LunaMetrics Plugin",
             "type": "html",
             "liveOnly": false,
@@ -36,11 +36,12 @@
             }],
             "fingerprint": "0",
             "firingTriggerId": ["2147479553"],
+            "parentFolderId": "11",
             "tagFiringOption": "ONCE_PER_EVENT"
         }, {
             "accountId": "28896164",
             "containerId": "1607357",
-            "tagId": "16",
+            "tagId": "20",
             "name": "GA - Event - Scroll Tracking",
             "type": "ua",
             "liveOnly": false,
@@ -105,14 +106,15 @@
                 "value": "Scroll Tracking"
             }],
             "fingerprint": "0",
-            "firingTriggerId": ["8"],
+            "firingTriggerId": ["10"],
+            "parentFolderId": "11",
             "tagFiringOption": "ONCE_PER_EVENT"
         }],
         "fingerprint": "0",
         "trigger": [{
             "accountId": "28896164",
             "containerId": "1607357",
-            "triggerId": "8",
+            "triggerId": "10",
             "name": "Event - Scroll Tracking",
             "type": "CUSTOM_EVENT",
             "customEventFilter": [{
@@ -127,12 +129,13 @@
                     "value": "scrollTracking"
                 }]
             }],
-            "fingerprint": "1445022475782"
+            "fingerprint": "1445027600600",
+            "parentFolderId": "11"
         }],
         "variable": [{
             "accountId": "28896164",
             "containerId": "1607357",
-            "variableId": "15",
+            "variableId": "19",
             "name": "Scroll Distance",
             "type": "v",
             "parameter": [{
@@ -148,11 +151,12 @@
                 "key": "dataLayerVersion",
                 "value": "2"
             }],
-            "fingerprint": "0"
+            "fingerprint": "0",
+            "parentFolderId": "11"
         }, {
             "accountId": "28896164",
             "containerId": "1607357",
-            "variableId": "16",
+            "variableId": "20",
             "name": "Scroll Label",
             "type": "v",
             "parameter": [{
@@ -168,7 +172,15 @@
                 "key": "dataLayerVersion",
                 "value": "2"
             }],
-            "fingerprint": "0"
+            "fingerprint": "0",
+            "parentFolderId": "11"
+        }],
+        "folder": [{
+            "accountId": "28896164",
+            "containerId": "1607357",
+            "folderId": "11",
+            "name": "LunaMetrics Scroll Tracking Plugin",
+            "fingerprint": "1445027599934"
         }]
     }
 }
