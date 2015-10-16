@@ -5,7 +5,8 @@ module.exports = function(grunt) {
 
   var footer = ['/*',
                 ' * v<%= pkg.version %>',
-                ' * Created by the honest folks at @LunaMetrics, written by @notdanwilkerson',
+                ' * Created by the Google Analytics consultants at @LunaMetrics',
+                ' * Written by @notdanwilkerson',
                 ' * Documentation: https://github.com/lunametrics/gascroll/',
                 ' * Licensed under the Creative Commons 4.0 Attribution Public License',
                 ' */'].join('\r\n');
@@ -87,7 +88,7 @@ module.exports = function(grunt) {
 
     for (i = 0; i < oldContainer.containerVersion.tag.length; i++) {
 
-      if (oldContainer.containerVersion.tag[i].name === 'CU LunaMetrics Scroll Tracking Plugin') {
+      if (oldContainer.containerVersion.tag[i].name === 'CU - Scroll Tracking - LunaMetrics Plugin') {
 
         oldTag = i;
         break;

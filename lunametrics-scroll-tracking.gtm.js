@@ -151,12 +151,10 @@
     if(typeof window[config.dataLayerName] !== 'undefined' && !config.forceSyntax) { 
 
       window[config.dataLayerName].push( {
-        'event': 'lunaScrollTracking',
-        'luna': {
-          'scrollTracking': {
-            'distance': distance,
-            'label': config.label
-          }
+        'event': 'scrollTracking',
+        'attributes': {
+          'distance': distance,
+          'label': config.label
         }
       });
 
@@ -341,8 +339,9 @@
   'label': document.location.pathname
 });
 /*
- * v0.1.0
- * Created by the honest folks at @LunaMetrics, written by @notdanwilkerson
+ * v1.0.0
+ * Created by the Google Analytics consultants at @LunaMetrics
+ * Written by @notdanwilkerson
  * Documentation: https://github.com/lunametrics/gascroll/
  * Licensed under the Creative Commons 4.0 Attribution Public License
  */

@@ -33,7 +33,7 @@ Once you publish your next container, scroll tracking will begin working immedia
 ####Manual Installation (not recommended)
 
 #####Adding the Script
-1. In Google Tag Manager, create a new Custom HTML tag. Name it 'CU LunaMetrics Scroll Tracking Plugin'.
+1. In Google Tag Manager, create a new Custom HTML tag. Name it 'CU - Scroll Tracking - LunaMetrics Plugin'.
 2. Copy the below into the blank Custom HTML tag:
 
     <script type="text/javascript" id="gtm-scroll-tracking">
@@ -47,19 +47,19 @@ Once you publish your next container, scroll tracking will begin working immedia
 #####Configuring GTM
 Create the following Trigger in Google Tag Manager:
 
-* Trigger Name: lunaScrollTracking Event Fired
+* Trigger Name: Event - Scroll Tracking
   - Trigger Type: Custom Event
-  - Event Name: lunaScrollTracking
+  - Event Name: scrollTracking
 
 Create the following Variables in Google Tag Manager:
 
-* Variable Name: luna.scrollTracking.distance
+* Variable Name: Scroll Distance
   - Variable Type: Data Layer
-  - Data Layer Variable Name: luna.scrollTracking.label
+  - Data Layer Variable Name: attributes.distance
 
-* Variable Name: luna.scrollTracking.label
+* Variable Name: Scroll Label
   - Variable Type: Data Layer
-  - Data Layer Variable Name: luna.scrollTracking.label
+  - Data Layer Variable Name: attributes.label
 
 Create the following Tag in Google Tag Manager:
 
@@ -69,15 +69,15 @@ Create the following Tag in Google Tag Manager:
   - Tracking ID: *&lt; Enter your Google Analytics Tracking ID (UA Number)*&gt;
   - Track Type: Event
   - Category: Scroll Tracking
-  - Action: {{luna.scrollTracking.distance}}
-  - Label: {{luna.scrollTracking.label}}
+  - Action: {{Scroll Distance}}
+  - Label: {{Scroll Label}}
   - Non-interaction Hit: True
   - More Settings:
     - Fields to Set:
       - Field Name: cookieDomain
       - Field Value: auto
   - Fire On: More
-    - Choose From Existing Triggers: Luna Scroll Tracking Event
+    - Choose From Existing Triggers: Event - Scroll Tracking
 
 Please ensure that other tracker settings are uniform in this event, as with your primary tracker (e.g. function name, cookie name, etc.). **Differences between Google Analytics tags in a container can cause difficult to debug tracking inconsistencies**.
 

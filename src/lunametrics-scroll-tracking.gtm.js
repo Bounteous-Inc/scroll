@@ -151,12 +151,10 @@
     if(typeof window[config.dataLayerName] !== 'undefined' && !config.forceSyntax) { 
 
       window[config.dataLayerName].push( {
-        'event': 'lunaScrollTracking',
-        'luna': {
-          'scrollTracking': {
-            'distance': distance,
-            'label': config.label
-          }
+        'event': 'scrollTracking',
+        'attributes': {
+          'distance': distance,
+          'label': config.label
         }
       });
 
