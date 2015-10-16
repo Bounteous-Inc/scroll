@@ -1,5 +1,7 @@
 ;(function(document, window, config) {
 
+  'use strict';
+
   var cache = {};
 
   // If our document is ready to go, fire straight away
