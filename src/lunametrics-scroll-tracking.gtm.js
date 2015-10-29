@@ -243,7 +243,7 @@
 
     if(_bottom) {
 
-      height = _bottom - _top;
+      height = _bottom - (_top || 0);
 
     }
 

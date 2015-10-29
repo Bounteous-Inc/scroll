@@ -5,7 +5,7 @@ module.exports = function(grunt) {
 
   var footer = ['/*',
                 ' * v<%= pkg.version %>',
-                ' * Created by the Google Analytics consultants at @LunaMetrics',
+                ' * Created by the Google Analytics consultants at http://www.lunametrics.com/',
                 ' * Written by @notdanwilkerson',
                 ' * Documentation: https://github.com/lunametrics/gascroll/',
                 ' * Licensed under the Creative Commons 4.0 Attribution Public License',
