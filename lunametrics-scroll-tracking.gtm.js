@@ -112,6 +112,7 @@
     var _n = parseInt(n, 10);
     var _num = total / _n;
     var arr = [];
+    var i;
     
     for(i = 1; i < _num + 1; i++) {
 
@@ -243,7 +244,7 @@
 
     if(_bottom) {
 
-      height = _bottom - _top;
+      height = _bottom - (_top || 0);
 
     }
 
@@ -341,8 +342,8 @@
   'label': document.location.pathname
 });
 /*
- * v1.0.0
- * Created by the Google Analytics consultants at @LunaMetrics
+ * v1.0.2
+ * Created by the Google Analytics consultants at http://www.lunametrics.com/
  * Written by @notdanwilkerson
  * Documentation: https://github.com/lunametrics/gascroll/
  * Licensed under the Creative Commons 4.0 Attribution Public License

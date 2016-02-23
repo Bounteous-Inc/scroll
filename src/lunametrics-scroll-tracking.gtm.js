@@ -112,6 +112,7 @@
     var _n = parseInt(n, 10);
     var _num = total / _n;
     var arr = [];
+    var i;
     
     for(i = 1; i < _num + 1; i++) {
 
