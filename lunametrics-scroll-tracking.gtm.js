@@ -87,7 +87,8 @@
           if (!MarksAlreadyTracked[selector]) {
 
             el = document.querySelector(selector); 
-            cache[selector] = getNodeDistanceFromTop(el);
+      
+            if (el) cache[selector] = getNodeDistanceFromTop(el);
       
           }
 
@@ -103,7 +104,7 @@
           els = document.querySelectorAll(selector);
 
           // If the last item in the selected group has been tracked, we skip it
-          if (!MarksAlreadyTracked[selector + ':' + (els.length - 1)]) {
+          if (els.length && !MarksAlreadyTracked[selector + ':' + (els.length - 1)]) {
 
             for (y = 0; y < els.length; y++) {
 
