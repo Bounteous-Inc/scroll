@@ -1,12 +1,14 @@
 #Scroll Tracking Google Analytics & GTM Plugin
 
-Plug-and-play, dependency-free scroll tracking for Google Analytics or Google Tag Manager. Can be customized for custom percentages and custom pixel lengths. It will detect if GTM, Universal Analytics, or Classic Analytics is installed on the page, in that order, and use the first syntax it matches unless configured otherwise. It include support for delivering hits directly to Universal or Classic Google Analytics, or for pushing Data Layer events to be used by Google Tag Manager.
+Plug-and-play, dependency-free scroll tracking for Google Analytics or Google Tag Manager. Can be customized for custom percentages, custom pixel lengths, and element-based tracking. It will detect if GTM, Universal Analytics, or Classic Analytics is installed on the page, in that order, and use the first syntax it matches unless configured otherwise. It include support for delivering hits directly to Universal or Classic Google Analytics, or for pushing Data Layer events to be used by Google Tag Manager.
 
 Once installed, the plugin will fire events with the following settings:
 
 - Event Category: Scroll Tracking
 - Event Action: *&lt;Scroll Percentage or Pixel Depth&gt;*
 - Event Label: *&lt;Page Path&gt;*
+
+Marker locations are refreshed every time the listener is called, so dynamic content should be trackable out of the box. Once a marker has been tracked, it is blocked from firing on subsequent checks. Tracking does not account for the starting position of the viewport; if the browser loads the viewport at the bottom of the page and the user triggers a scroll event, all percentages up to that point in the document will be tracked.
 
 ##Installation
 
@@ -105,7 +107,7 @@ Fires an event every *n*% scrolled. The default setting fires every 25%.
     })(document, window, {
       'distances': {
         'percentages': {
-          'every': 25 // Fires at the 25%, 50%, 75%, and 100% scroll marks
+          'every': [10, 25] // Fires at the 10%, 20%, 25%, 30%, 40%, 50%, 60%, 70%, 75%, 80%, 90%, and 100% scroll marks
         }
       }
     });
@@ -125,7 +127,7 @@ Fires an event when the user scrolls past each percentage provided in the array.
       }
     });
 
-**NOTE**: Google Analytics has a 500 hit per-session limitation, as well as a 20 hit window that replenishes at 2 hits per second. For that reason, it is HIGHLY INADVISABLE to     track every 1% of page scrolled.
+**NOTE**: Google Analytics has a 500 hit per-session limitation, as well as a 20 hit window that replenishes at 2 hits per second. For that reason, it is HIGHLY INADVISABLE to track every 1% of page scrolled.
 
 #### distances.pixels.every
 Fires an event every *n* pixels scrolled vertically.
@@ -137,7 +139,7 @@ Fires an event every *n* pixels scrolled vertically.
     })(document, window, {
       'distances': {
         'pixels': {
-          'every': 250  // Fires at the 250px, 500px, 750px, ... scroll marks.
+          'every': [250, 300]  // Fires at the 250px, 300px, 500px, 600px, 750px, ... scroll marks.
         }
       }
     });
@@ -157,7 +159,43 @@ Fires an event when the user scrolls past each number of pixels provided in the 
       }
     });
 
-**NOTE**: Google Analytics has a 500 hit per-session limitation, as well as a 20 hit window that replenishes at 2 hits per second. For that reason, it is HIGHLY INADVISABLE to     track every pixel of the page scrolled.
+Under the hood, the selector is passed to `document.querySelector`. The resulting locations are cached temporarily to prevent browser shudder.
+
+**NOTE**: Google Analytics has a 500 hit per-session limitation, as well as a 20 hit window that replenishes at 2 hits per second. For that reason, it is HIGHLY INADVISABLE to track every pixel of the page scrolled.
+
+#### distances.elements.every
+Fires every time an element matching the given selector is scrolled past
+
+    (function(document, window, config) {
+
+      // ... the tracking code
+
+    })(document, window, {
+      'distances': {
+        'elements': {
+          'every': ['.hero-img', '.code-sample > pre']  // Fires when the user scrolls past any elements with the class 'base-img' and any pre elements that are the immediate children of an element with the class 'code-sample'.
+        }
+      }
+    });
+
+Under the hood, the selector is passed to `document.querySelectorAll`. The resulting locations are cached temporarily to prevent browser shudder.
+
+#### distances.elements.each
+Fires when the first element to match a given selector is scrolled past
+
+    (function(document, window, config) {
+
+      // ... the tracking code
+
+    })(document, window, {
+      'distances': {
+        'elements': {
+          'each': ['#content', '#footer']  // Fires when the #content and #footer elements are scrolled past
+        }
+      }
+    });
+
+**NOTE**: Google Analytics has a 500 hit per-session limitation, as well as a 20 hit window that replenishes at 2 hits per second. For that reason, it is HIGHLY INADVISABLE to track every element of the page scrolled.
 
 ### Top/Bottom Of Scrollable Area
 This script allows you to specify where to begin and end tracking user scrolling. The default configuration is the entire page.

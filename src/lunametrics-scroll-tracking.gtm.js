@@ -2,7 +2,133 @@
 
   'use strict';
 
-  var cache = {};
+  // Global cache we'll use to ensure no double-tracking occurs
+  var MarksAlreadyTracked = {};
+  
+  // Backwards compatible with old every setting, which was single value
+  if (config.distances.percentages && config.distances.percentages.every) {
+
+    if (!isArray_(config.distances.percentages.every)) {
+
+      config.distances.percentages.every = [config.distances.percentages.every];
+
+    }
+
+  }
+
+  // Backwards compatible with old every setting, which was single value
+  if (config.distances.pixels && config.distances.pixels.every) {
+
+    if (!isArray_(config.distances.pixels.every)) {
+
+      config.distances.pixels.every = [config.distances.pixels.every];
+
+    }
+
+  }
+
+  // Get a hold of any relevant elements, if specified in config
+  var elementDistances = (function(selectors) {
+
+    // If no selectors specified, short circuit here
+    if (!selectors) return;
+
+    // Create a cache to store positions of elements temporarily
+    var cache = {};
+    var counter = 0;
+
+    // Fetch latest positions
+    _update();
+
+    // Return a function that can be called to get a map of element positions
+    return function () {
+
+      // Clone here to prevent inheritance from getMarks step
+      var shallowClone = {};
+      var key;
+
+      counter++;
+
+      // If temp cache counter is greater than 10, re-poll elements
+      if (counter > 10) {
+
+        _update();
+        counter = 0;
+
+      }
+
+      for (key in cache) {
+
+        shallowClone[key] = cache[key];
+
+      }
+
+      return shallowClone;
+
+    };
+
+    function _update() {
+
+      var selector,
+          markName,
+          els,
+          el,
+          y,
+          i;
+      // Clear current cache
+      cache = {};
+
+      if (selectors.each) {
+
+        for (i = 0; i < selectors.each.length; i++) {
+          
+          selector = selectors.each[i];
+    
+          if (!MarksAlreadyTracked[selector]) {
+
+            el = document.querySelector(selector); 
+      
+            if (el) cache[selector] = getNodeDistanceFromTop(el);
+      
+          }
+
+        }
+
+      }
+
+      if (selectors.every) {
+
+        for (i = 0; i < selectors.every.length; i++) {
+
+          selector = selectors.every[i];
+          els = document.querySelectorAll(selector);
+
+          // If the last item in the selected group has been tracked, we skip it
+          if (els.length && !MarksAlreadyTracked[selector + ':' + (els.length - 1)]) {
+
+            for (y = 0; y < els.length; y++) {
+
+              markName = selector + ':' + y; 
+
+              // We also check at the individual element level
+              if (!MarksAlreadyTracked[markName]) {
+
+                el = els[y];
+                cache[markName] = getNodeDistanceFromTop(el);
+
+              }
+
+            }
+
+          }
+
+        }
+
+      }
+
+    }
+
+  })(config.distances.elements);
 
   // If our document is ready to go, fire straight away
   if(document.readyState !== 'loading') {
@@ -40,9 +166,12 @@
 
   function getMarks(_docHeight, _offset) {
 
-    var marks = {};
+    var marks = elementDistances() || {};
     var percents = [];
     var pixels = [];
+    var everyPercent,
+        everyPixel,
+        i;
 
     if(config.distances.percentages) {
 
@@ -54,8 +183,12 @@
 
       if(config.distances.percentages.every) {
 
-        var _everyPercent = every_(config.distances.percentages.every, 100);
-        percents = percents.concat(_everyPercent);
+        for (i = 0; i < config.distances.percentages.every.length; i++) {
+
+          everyPercent = every_(config.distances.percentages.every[i], 100);
+          percents = pixels.concat(everyPercent);
+
+        }
 
       }
 
@@ -71,8 +204,12 @@
 
       if(config.distances.pixels.every) {
 
-        var _everyPixel = every_(config.distances.pixels.every, _docHeight);
-        pixels = pixels.concat(_everyPixel);
+        for (i = 0; i < config.distances.pixels.every.length; i++) {
+
+          everyPixel = every_(config.distances.pixels.every[i], _docHeight);
+          pixels = pixels.concat(everyPixel);
+
+        }
 
       }
 
@@ -126,19 +263,27 @@
 
   function checkDepth() {
 
-    var _bottom = parseBorder_(config.bottom);
-    var _top = parseBorder_(config.top);
-
+    var _bottom = parseScrollBorder(config.bottom);
+    var _top = parseScrollBorder(config.top);
     var height = docHeight(_bottom, _top);
     var marks = getMarks(height, (_top || 0));
     var _curr = currentPosition();
-    var key;
+    var target,
+        key;
 
     for(key in marks) {
 
-      if(_curr > marks[key] && !cache[key]) {
+      target = marks[key];
 
-        cache[key] = true;
+      // If we've scrolled past the mark, we haven't tracked it yet, and it's in range, track the mark
+      if(
+        _curr > target && 
+        !MarksAlreadyTracked[key] && 
+        target < (_bottom || Infinity) && 
+        target > (_top || 0)
+      ) {
+
+        MarksAlreadyTracked[key] = true;
         fireAnalyticsEvent(key);
 
       }
@@ -176,7 +321,7 @@
 
   }
 
-  function parseBorder_(border) {
+  function parseScrollBorder(border) {
 
     if(typeof border === 'number' || parseInt(border, 10)) {
 
@@ -188,10 +333,8 @@
 
       // If we have an element or a query selector, poll getBoundingClientRect
       var el = border.nodeType === 1 ? border : document.querySelector(border);
-      var docTop = document.body.getBoundingClientRect().top;
-      var _elTop = Math.floor(el.getBoundingClientRect().top - docTop);
 
-      return _elTop;
+      return getNodeDistanceFromTop(el); 
 
     } catch (e) {
 
@@ -251,6 +394,7 @@
     return height - 5;
 
   }
+
 
   /*
   * Throttle function borrowed from:
@@ -315,6 +459,26 @@
 
   }
 
+  // Helper for fetching top of element
+  function getNodeDistanceFromTop(node) {
+
+    var nodeTop = node.getBoundingClientRect().top;
+    // https://developer.mozilla.org/en-US/docs/Web/API/Window/scrollX
+    var docTop = (window.pageYOffset !== undefined) ?
+      window.pageYOffset :
+      (document.documentElement || document.body.parentNode || document.body).scrollTop; 
+
+    return nodeTop + docTop;
+
+  }
+
+  // Helper to check if something is an Array
+  function isArray_(thing) {
+
+    return thing instanceof Array;
+
+  }
+
 })(document, window, {
   // Use 2 to force Classic Analytics hits and 1 for Universal hits
   'forceSyntax': false,
@@ -324,12 +488,17 @@
     // Configure percentages of page you'd like to see if users scroll past
     'percentages': {
       'each': [10,90],
-      'every': 25
+      'every': [25]
     },
     // Configure for pixel measurements of page you'd like to see if users scroll past
     'pixels': {
       'each': [],
-      'every': null
+      'every': []
+    },
+    // Configure elements you'd like to see users scroll past (using CSS Selectors)
+    'elements': {
+      'each': [],
+      'every': []
     }
   },
   // Accepts a number, DOM element, or query selector to determine the top of the scrolling area

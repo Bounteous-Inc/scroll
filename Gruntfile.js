@@ -9,12 +9,20 @@ module.exports = function(grunt) {
                 ' * Written by @notdanwilkerson',
                 ' * Documentation: https://github.com/lunametrics/gascroll/',
                 ' * Licensed under the Creative Commons 4.0 Attribution Public License',
-                ' */'].join('\r\n');
+                ' */'
+  ].join('\r\n');
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     jshint: {
-      files: ['./src/lunametrics-scroll-tracking.gtm.js']
+      // files: ['./src/*.js'],
+      ignore_warning: {
+        options: {
+          '-W030': true,
+          '-W058': true
+        },
+        src: ['./src/*.js']
+      }
     },
     uglify: {
       options: {
@@ -109,7 +117,7 @@ module.exports = function(grunt) {
    
     oldContainer.containerVersion.tag[oldTag].parameter[oldParameter].value = '<script type="text/javascript" id="gtm-scroll-tracking">\n' +
       newScript +
-      '\n</script>'
+      '\n</script>';
    
     fs.writeFileSync(options.build.dest, jsBeautify(JSON.stringify(oldContainer)));
 
