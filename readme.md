@@ -236,7 +236,20 @@ If you're using a name for your dataLayer object other than 'dataLayer', you mus
 
 ## License
 
-Licensed under the Creative Commons 4.0 International Public License. Refer to the LICENSE.MD file in the repository for the complete text of the license.
+Licensed under the MIT License. For the full text of the license, view the LICENSE.MD file included with this repository.
+
+## Browser Support
+
+This library supports all features and is tested on the following browsers:
+- IE8
+- IE9
+- IE10
+- IE11
+- Edge
+- Chrome
+- Firefox
+- Opera
+- Safari
 
 ## Acknowledgements
 
