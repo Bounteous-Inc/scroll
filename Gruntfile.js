@@ -8,7 +8,7 @@ module.exports = function(grunt) {
                 ' * Created by the Google Analytics consultants at http://www.lunametrics.com/',
                 ' * Written by @notdanwilkerson',
                 ' * Documentation: https://github.com/lunametrics/gascroll/',
-                ' * Licensed under the Creative Commons 4.0 Attribution Public License',
+                ' * Licensed under the MIT License',
                 ' */'
   ].join('\r\n');
 
