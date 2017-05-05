@@ -511,7 +511,7 @@
   'label': document.location.pathname
 });
 /*
- * v1.1.1
+ * v1.1.2
  * Created by the Google Analytics consultants at http://www.lunametrics.com/
  * Written by @notdanwilkerson
  * Documentation: https://github.com/lunametrics/gascroll/
