@@ -95,11 +95,11 @@
             }, {
                 "type": "TEMPLATE",
                 "key": "eventLabel",
-                "value": "{{Scroll Label}}"
+                "value": "{{DLV - attributes.label}}"
             }, {
                 "type": "TEMPLATE",
                 "key": "eventAction",
-                "value": "{{Scroll Distance}}"
+                "value": "{{DLV - attributes.distance}}"
             }, {
                 "type": "TEMPLATE",
                 "key": "eventCategory",
@@ -136,7 +136,7 @@
             "accountId": "28896164",
             "containerId": "1607357",
             "variableId": "19",
-            "name": "Scroll Distance",
+            "name": "DLV - attributes.distance",
             "type": "v",
             "parameter": [{
                 "type": "BOOLEAN",
@@ -157,7 +157,7 @@
             "accountId": "28896164",
             "containerId": "1607357",
             "variableId": "20",
-            "name": "Scroll Label",
+            "name": "DLV - attributes.label",
             "type": "v",
             "parameter": [{
                 "type": "BOOLEAN",
