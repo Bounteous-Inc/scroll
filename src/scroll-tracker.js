@@ -1,3 +1,7 @@
+// @TODO Fix each/every
+// @TODO Finish example
+// @TODO Add options to constructor
+// @TODO add "minHeight" option
 /**
  * @example
  *
