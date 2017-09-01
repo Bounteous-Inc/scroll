@@ -4,7 +4,7 @@
 
   // Global cache we'll use to ensure no double-tracking occurs
   var MarksAlreadyTracked = {};
-  
+
   // Backwards compatible with old every setting, which was single value
   if (config.distances.percentages && config.distances.percentages.every) {
 
@@ -81,15 +81,15 @@
       if (selectors.each) {
 
         for (i = 0; i < selectors.each.length; i++) {
-          
+
           selector = selectors.each[i];
-    
+
           if (!MarksAlreadyTracked[selector]) {
 
-            el = document.querySelector(selector); 
-      
+            el = document.querySelector(selector);
+
             if (el) cache[selector] = getNodeDistanceFromTop(el);
-      
+
           }
 
         }
@@ -108,7 +108,7 @@
 
             for (y = 0; y < els.length; y++) {
 
-              markName = selector + ':' + y; 
+              markName = selector + ':' + y;
 
               // We also check at the individual element level
               if (!MarksAlreadyTracked[markName]) {
@@ -138,8 +138,8 @@
   } else {
 
     // On IE8 this fires on window.load, all other browsers will fire when DOM ready
-    document.addEventListener ? 
-      addEvent(document, 'DOMContentLoaded', init) : 
+    document.addEventListener ?
+      addEvent(document, 'DOMContentLoaded', init) :
       addEvent(window, 'load', init);
 
   }
@@ -250,7 +250,7 @@
     var _num = total / _n;
     var arr = [];
     var i;
-    
+
     for(i = 1; i < _num + 1; i++) {
 
       arr.push(i * _n);
@@ -277,9 +277,9 @@
 
       // If we've scrolled past the mark, we haven't tracked it yet, and it's in range, track the mark
       if(
-        _curr > target && 
-        !MarksAlreadyTracked[key] && 
-        target < (_bottom || Infinity) && 
+        _curr > target &&
+        !MarksAlreadyTracked[key] &&
+        target < (_bottom || Infinity) &&
         target > (_top || 0)
       ) {
 
@@ -296,7 +296,7 @@
 
     var _ga = window.GoogleAnalyticsObject;
 
-    if(typeof window[config.dataLayerName] !== 'undefined' && !config.forceSyntax) { 
+    if(typeof window[config.dataLayerName] !== 'undefined' && !config.forceSyntax) {
 
       window[config.dataLayerName].push( {
         'event': 'scrollTracking',
@@ -306,9 +306,9 @@
         }
       });
 
-    } else if (typeof window[_ga] === 'function' && 
-              typeof window[_ga].getAll === 'function' && 
-              config.forceSyntax !== 2) 
+    } else if (typeof window[_ga] === 'function' &&
+              typeof window[_ga].getAll === 'function' &&
+              config.forceSyntax !== 2)
     {
 
       window[_ga]('send', 'event', config.category, distance, config.label, {'nonInteraction': 1});
@@ -334,7 +334,7 @@
       // If we have an element or a query selector, poll getBoundingClientRect
       var el = border.nodeType === 1 ? border : document.querySelector(border);
 
-      return getNodeDistanceFromTop(el); 
+      return getNodeDistanceFromTop(el);
 
     } catch (e) {
 
@@ -374,8 +374,8 @@
 
     var body = document.body;
     var html = document.documentElement;
-    
-    var height = Math.max(body.scrollHeight, body.offsetHeight, 
+
+    var height = Math.max(body.scrollHeight, body.offsetHeight,
                       html.clientHeight, html.scrollHeight, html.offsetHeight);
 
 
@@ -466,7 +466,7 @@
     // https://developer.mozilla.org/en-US/docs/Web/API/Window/scrollX
     var docTop = (window.pageYOffset !== undefined) ?
       window.pageYOffset :
-      (document.documentElement || document.body.parentNode || document.body).scrollTop; 
+      (document.documentElement || document.body.parentNode || document.body).scrollTop;
 
     return nodeTop + docTop;
 
@@ -479,34 +479,23 @@
 
   }
 
+  return {
+    reset: function() {
+
+      MarksAlreadyTracked = {};
+
+    }
+  };
+
 })(document, window, {
-  // Use 2 to force Classic Analytics hits and 1 for Universal hits
-  'forceSyntax': false,
-  // False if you just use the default dataLayer variable, otherwise enter it here
-  'dataLayerName': false,
   'distances': {
-    // Configure percentages of page you'd like to see if users scroll past
-    'percentages': {
-      'each': [10,90],
-      'every': [25]
-    },
-    // Configure for pixel measurements of page you'd like to see if users scroll past
-    'pixels': {
-      'each': [],
-      'every': []
-    },
     // Configure elements you'd like to see users scroll past (using CSS Selectors)
     'elements': {
-      'each': [],
-      'every': []
+      'every': ['.finder-listing']
     }
   },
-  // Accepts a number, DOM element, or query selector to determine the top of the scrolling area
-  'top': null,
-  // Accepts a number, DOM element, or query selector to determine the bottom of the scrolling area
-  'bottom': null,
   // Text for Event Category
-  'category': 'Scroll Tracking',
+  'category': 'Finder Tracking',
   // Text for Event Label
   'label': document.location.pathname
 });
