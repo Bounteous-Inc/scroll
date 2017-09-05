@@ -1,12 +1,11 @@
-// @TODO Fix each/every
-// @TODO Finish example
-// @TODO Add options to constructor
-// @TODO add "minHeight" option
 /**
+ * Emits events based on scrolling behavior in a given context. Shouldn't
+ * be called until after DOMReady.
+ *
  * @example
  *
  * var scrollTracker = ScrollTracker({
- *    target: '#content'
+ *   context: '#content'
  * });
  *
  * scrollTracker.on({
@@ -28,24 +27,33 @@
 (function(window) {
 
   'use strict';
+
+  // Won't work on IE8, so we install a fake.
+  if (window.navigator.userAgent.match(/MSIE [678]/gi)) return installFake();
+
   var document = window.document;
 
   /**
    * @constructor
    *
-   * @param {HTMLElement} [context] defaults to <body>
+   * @param {object} [opts] options for the constructor
+   * @param {HTMLElement} [opts.context] defaults to <body>
+   * @param {number} [opts.minHeight] minimum height of context required to track
    *
    * @returns {ScrollTracker}
    */
-  function ScrollTracker(context) {
+  function ScrollTracker(opts) {
 
-    if (!(this instanceof ScrollTracker)) return new ScrollTracker(context);
+    if (!(this instanceof ScrollTracker)) return new ScrollTracker(opts);
 
-    context = context || 'body';
+    opts = opts || {};
+
+    var context = opts.context || 'body';
 
     if (typeof context === 'string') context = document.querySelector(context);
 
     this._context = context;
+    this.minHeight = opts.minHeight || 0;
     this._marks = {};
     this._tracked = {};
     this._config = {
@@ -63,57 +71,31 @@
       }
     };
 
-    var boundDepthCheck = this.checkDepth.bind(this);
+    var boundAndThrottledDepthCheck = throttle(this._checkDepth.bind(this), 500);
     var boundUpdate = this._update.bind(this);
+    var throttledUpdate = throttle(boundUpdate, 500);
 
-    window.addEventListener('scroll', throttle(boundDepthCheck, 500), true);
+    window.addEventListener('scroll', boundAndThrottledDepthCheck, true);
+    window.addEventListener('resize', throttledUpdate);
 
-    window.addEventListener('resize', throttle(boundUpdate, 500));
-
-    this._timer = onDocHeightChange(boundUpdate);
+    this._artifacts = {
+      timer: onDocHeightChange(boundUpdate),
+      resize: throttledUpdate,
+      scroll: boundAndThrottledDepthCheck
+    };
 
   }
 
+  /**
+   * Cleans up timer and event bindings
+   */
   ScrollTracker.prototype.destroy = function() {
 
-    clearInterval(this._timer);
+    clearInterval(this._artifacts._timer);
+    window.removeEventListener('resize', this._artifacts.resize);
+    window.removeEventListener('scroll', this._artifacts.scroll, true);
 
   };
-
-  /**
-   * Helper that watches for changes in the height of the document
-   */
-  function onDocHeightChange(handler) {
-
-    var documentHeight = docHeight();
-
-    return setInterval(function() {
-
-      if (docHeight() !== documentHeight) {
-
-        handler();
-        documentHeight = docHeight();
-
-      }
-
-    }, 500);
-
-  }
-
-  /**
-   * Returns the height of the document
-   *
-   * @returns {number}
-   */
-  function docHeight() {
-
-    var body = document.body;
-    var html = document.documentElement;
-
-    return Math.max(body.scrollHeight, body.offsetHeight,
-                      html.clientHeight, html.scrollHeight, html.offsetHeight);
-
-  }
 
   /**
    * Registers a handler for a given configuration
@@ -163,7 +145,7 @@
   ScrollTracker.prototype._update = function() {
 
     this._calculateMarks();
-    this.checkDepth();
+    this._checkDepth();
 
   };
 
@@ -184,7 +166,9 @@
         depth,
         key;
 
-    for (key in _config.percentages.each) {
+    if (contextHeight < this.minHeight) return;
+
+    for (key in _config.percentages.every) {
 
       forEachIn({
         n: Number(key),
@@ -196,7 +180,7 @@
           addMark({
             label: String(n) + '%',
             depth: depth,
-            handlers: _config.percentages.each[key]
+            handlers: _config.percentages.every[key]
           });
 
         }
@@ -204,7 +188,7 @@
 
     }
 
-    for (key in _config.pixels.each) {
+    for (key in _config.pixels.every) {
 
       forEachIn({
         n: Number(key),
@@ -214,9 +198,9 @@
           var depth = n;
 
           addMark({
-            label: String(depth),
+            label: String(depth) + 'px',
             depth: depth,
-            handlers: _config.pixels.each[key]
+            handlers: _config.pixels.every[key]
           });
 
         }
@@ -224,44 +208,45 @@
 
     }
 
-    for (key in _config.percentages.every) {
+    for (key in _config.percentages.each) {
 
       depth = Math.floor(contextHeight * Number(key) / 100);
 
       addMark({
         label: key + '%',
         depth: depth,
-        handlers: _config.percentages.every[key]
+        handlers: _config.percentages.each[key]
       });
 
     }
 
-    for (key in _config.pixels.every) {
+    for (key in _config.pixels.each) {
 
       depth = Number(key);
 
       addMark({
-        label: key,
+        label: key + 'px',
         depth: depth,
-        handlers: _config.pixels.every[key]
+        handlers: _config.pixels.each[key]
       });
 
     }
 
-    for (key in _config.elements.each) {
+    for (key in _config.elements.every) {
 
-      elements = [].slice.call(document.querySelectorAll(key));
+      elements = [].slice.call(this._context.querySelectorAll(key));
 
       if (elements.length) {
 
         elements.forEach(function(element, ind) {
 
-          var depth = element.getBoundingClientRect().top + self._context.scrollTop;
+          var depth = element.getBoundingClientRect().top -
+            self._context.getBoundingClientRect().top;
 
           addMark({
             label: key + '[' + ind + ']',
             depth: depth,
-            handlers: _config.elements.each[key]
+            handlers: _config.elements.every[key]
           });
 
         });
@@ -270,18 +255,19 @@
 
     }
 
-    for (key in _config.elements.every) {
+    for (key in _config.elements.each) {
 
-      element = document.querySelector(key);
+      element = this._context.querySelector(key);
 
       if (element) {
 
-        depth = element.getBoundingClientRect().top + this._context.scrollTop;
+        depth = element.getBoundingClientRect().top -
+          self._context.getBoundingClientRect().top;
 
         addMark({
           label: key,
           depth: depth,
-          handlers: _config.elements.every[key]
+          handlers: _config.elements.each[key]
         });
 
       }
@@ -293,7 +279,7 @@
   /**
    * Checks all marks and triggers appropriate handlers
    */
-  ScrollTracker.prototype.checkDepth = function() {
+  ScrollTracker.prototype._checkDepth = function() {
 
     var marks = this._marks;
     var currentDepth = this._currentDepth();
@@ -313,7 +299,6 @@
 
   };
 
-
   /**
    * Resets the internal cache of tracked marks
    */
@@ -325,19 +310,39 @@
 
   /**
    * Returns the height of the scrolling context
+   *
+   * @returns {number}
    */
   ScrollTracker.prototype._contextHeight = function() {
 
-    return this._context.scrollHeight - 10;
+    if (this._context !== document.body) return this._context.scrollHeight;
+
+    return this._context.clientHeight;
 
   };
 
   /**
    * Returns the current depth we've scrolled into the context
+   *
+   * @returns {number}
    */
   ScrollTracker.prototype._currentDepth = function() {
 
-    return this._context.scrollTop + visibleInViewport(this._context);
+    var isVisible = visibleInViewport(this._context);
+
+    if (!isVisible) return -1;
+
+    if (this._context === document.body) {
+
+      return (window.pageYOffset ||
+        document.documentElement.scrollTop ||
+        document.body.scrollTop || 0) + isVisible;
+
+    } else {
+
+      return this._context.scrollTop + isVisible;
+
+    }
 
   };
 
@@ -354,20 +359,6 @@
     var depth = config.depth;
 
     this._marks[depth] = (this._marks[depth] || []).concat(Mark(config));
-
-  };
-
-  ScrollTracker.prototype._defer = function(opts) {
-
-    this.__opts = opts;
-
-    return {
-      on: function(config, handler) {
-
-        this.__on = (this.__on || []).push([config, handler]);
-
-      }
-    };
 
   };
 
@@ -423,16 +414,51 @@
   }
 
   /**
+   * Helper that watches for changes in the height of the document
+   */
+  function onDocHeightChange(handler) {
+
+    var documentHeight = docHeight();
+
+    return setInterval(function() {
+
+      if (docHeight() !== documentHeight) {
+
+        handler();
+        documentHeight = docHeight();
+
+      }
+
+    }, 500);
+
+  }
+
+  /**
+   * Returns the height of the document
+   *
+   * @returns {number}
+   */
+  function docHeight() {
+
+    var body = document.body;
+    var html = document.documentElement;
+
+    return Math.max(body.scrollHeight, body.offsetHeight,
+                      html.clientHeight, html.scrollHeight, html.offsetHeight);
+
+  }
+
+  /**
    * Returns the number of pixels of the element visible in the viewport
    * @param {HTMLElement} element
    *
    * @returns {number}
-   * direct inspired by:
+   * adapted from:
    * @link https://stackoverflow.com/questions/24768795/get-the-visible-height-of-a-div-with-jquery#answer-26831113
    */
   function visibleInViewport(element) {
 
-    var height = element.offsetHeight
+    var height = element.offsetHeight;
     var windowHeight = viewportHeight();
     var rect = element.getBoundingClientRect();
 
@@ -458,6 +484,11 @@
     return elem.clientHeight;
 
   }
+
+  /**
+   * Does nothing
+   */
+  function noop() {}
 
   /*
    * Throttle function borrowed from:
@@ -493,17 +524,23 @@
     };
   }
 
-  window.ScrollTracker = document.readyState !== 'loading' ?
-    ScrollTracker :
-    ScrollTracker.deferred;
+  /**
+   * Installs a noop'd version of ScrollTracker on the window
+   */
+  function installFake() {
 
-// Basically, if the DOM aint' ready, temporarily store
-// calls to on and the constructor, then fix those when it is ready
+    var fake = {};
 
-  document.addEventListener('DOMContentLoaded', function() {
+    for (key in ScrollTracker) {
 
+      fake[key] = noop;
 
+    }
 
-  });
+    window.ScrollTracker = fake;
+
+  }
+
+  window.ScrollTracker = ScrollTracker;
 
 })(this);
