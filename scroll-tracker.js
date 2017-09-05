@@ -606,3 +606,10 @@
   window.ScrollTracker = ScrollTracker;
 
 })(this);
+/*
+ * v2.0.0
+ * Created by the Google Analytics consultants at http://www.lunametrics.com/
+ * Written by @notdanwilkerson
+ * Documentation: https://github.com/lunametrics/gascroll/
+ * Licensed under the MIT License
+ */

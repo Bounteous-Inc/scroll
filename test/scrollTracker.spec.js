@@ -271,6 +271,25 @@ describe('scroll-tracker', function(){
 
   });
 
+  describe('no context', function() {
+
+    it ('should throw an error if the context is invalid', function(done) {
+
+      try {
+        ScrollTracker({
+          context: '#foobar'
+        });
+      } catch(e) {
+
+        expect(e).toBeDefined();
+        done();
+
+      }
+
+    });
+
+  });
+
 });
 
 function noop () {}

@@ -5,8 +5,6 @@ module.exports = function(config) {
 
     basePath: './',
 
-    // customContextFile: 'test/scroll.html',
-
     frameworks: ["jasmine"],
 
     files: [
