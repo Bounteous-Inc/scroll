@@ -26,9 +26,8 @@
 (function(window) {
 
   'use strict';
-
-  // Won't work on IE8, so we install a fake.
-  if (window.navigator.userAgent.match(/MSIE [678]/gi)) return installFake();
+  // Won't work on IE8, so we install a mock.
+  if (window.navigator.userAgent.match(/MSIE [678]/gi)) return installMock();
 
   var document = window.document;
 
@@ -156,6 +155,7 @@
   ScrollTracker.prototype._calculateMarks = function() {
 
     delete this._marks;
+    this._fromTop = getNodeDistanceFromTop(this._context);
     this._marks = {};
 
     var _config = this._config;
@@ -342,6 +342,7 @@
 
     var marks = this._marks;
     var currentDepth = this._currentDepth();
+
     var key;
 
     for (key in marks) {
@@ -390,20 +391,38 @@
   ScrollTracker.prototype._currentDepth = function() {
 
     var isVisible = visibleInViewport(this._context);
+    var depth;
 
-    if (!isVisible) return -1;
+    if (!this._context.scrollTop) {
 
-    if (this._context === document.body) {
+      this._context.scrollTop = 1;
 
-      return (window.pageYOffset ||
-        document.documentElement.scrollTop ||
-        document.body.scrollTop || 0) + isVisible;
+      if (!this._context.scrollTop) {
+
+        depth = (window.pageYOffset ||
+          document.documentElement.scrollTop ||
+          document.body.scrollTop || 0);
+
+      } else {
+
+        this._context.scrollTop = 0;
+        depth = this._context.scrollTop + isVisible;
+
+      }
 
     } else {
 
-      return this._context.scrollTop + isVisible;
+      depth = this._context.scrollTop + isVisible;
 
     }
+
+    if (!isVisible) {
+
+      return depth >= this._fromTop ? depth : -1;
+
+    }
+
+    return depth + isVisible;
 
   };
 
@@ -456,6 +475,8 @@
   }
 
   /**
+   * Calls a callback function each time config.n goes into config.numerator
+   *
    * @param {object} config
    * @param {number} config.n
    * @param {number} config.numerator
@@ -547,11 +568,30 @@
   }
 
   /**
+   * Retrieves the distance of a node from the top of the document
+   *
+   * @param {HTMLElement} node
+   *
+   * @returns {number}
+   */
+  function getNodeDistanceFromTop(node) {
+
+    var nodeTop = node.getBoundingClientRect().top;
+    // @link https://developer.mozilla.org/en-US/docs/Web/API/Window/scrollX
+    var docTop = (window.pageYOffset !== undefined) ?
+      window.pageYOffset :
+      (document.documentElement || document.body.parentNode || document.body).scrollTop;
+
+    return nodeTop + docTop;
+
+  }
+
+  /**
    * Does nothing
    */
   function noop() {}
 
-  /*
+  /**
    * Throttle function borrowed from:
    * Underscore.js 1.5.2
    * http://underscorejs.org
@@ -588,7 +628,7 @@
   /**
    * Installs a noop'd version of ScrollTracker on the window
    */
-  function installFake() {
+  function installMock() {
 
     var fake = {};
     var key;

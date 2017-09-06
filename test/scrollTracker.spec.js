@@ -3,7 +3,7 @@ describe('scroll-tracker', function(){
 
   beforeEach(function(done) {
 
-    var html = '<div style="height: 1000px; width: 100%;"></div>' +
+    var html = '<div class="spacer" style="height: 1000px; width: 100%;"></div>' +
       '<div class="every" style="height: 200px; width: 100%;"></div>' +
       '<div id="each" style="height: 100px; width: 100%;"></div>' +
       '<div class="every" style="height: 200px; width: 100%;"></div>' +
@@ -120,9 +120,51 @@ describe('scroll-tracker', function(){
 
   });
 
+  describe('body element', function() {
+
+    it ('should track an element with percentages', function(done) {
+
+      var tracker = ScrollTracker({
+        context: '.spacer'
+      });
+      var passed = {};
+
+      var outcome = {
+        '10%': 100,
+        '25%': 250,
+        '50%': 500,
+        '75%': 750,
+        '90%': 900,
+        '100%': 1000
+      };
+
+      tracker.on({
+        percentages: {
+          every: [25],
+          each: [10, 90]
+        }
+      }, function(evt) {
+
+        passed[evt.data.label] = evt.data.depth;
+
+      });
+
+      window.scrollTo(0, 1000);
+
+      setTimeout(function() {
+
+        expect(passed).toEqual(outcome);
+        done();
+
+      }, 1000);
+
+    });
+
+  });
+
   describe('height change', function() {
 
-    it ('should adjust marks when a resize event occurs', function(done) {
+    it ('should adjust marks when height changes', function(done) {
 
       var tracker = ScrollTracker();
 

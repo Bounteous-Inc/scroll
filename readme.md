@@ -1,3 +1,8 @@
+# tested
+
+- IE9
+- IE 10
+
 # Scroll Tracking Google Analytics & GTM Plugin
 
 Plug-and-play, dependency-free scroll tracking for Google Analytics or Google Tag Manager. Can be customized for custom percentages, custom pixel lengths, and element-based tracking. It will detect if GTM, Universal Analytics, or Classic Analytics is installed on the page, in that order, and use the first syntax it matches unless configured otherwise. It include support for delivering hits directly to Universal or Classic Google Analytics, or for pushing Data Layer events to be used by Google Tag Manager.
