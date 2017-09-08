@@ -342,7 +342,6 @@
 
     var marks = this._marks;
     var currentDepth = this._currentDepth();
-
     var key;
 
     for (key in marks) {

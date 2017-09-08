@@ -1,19 +1,51 @@
-# tested
+# Scroll Tracker
 
-- IE9
+Library for observing scrolling behavior. Register handlers to fire when a user scrolls past a custom percentage, pixel depth, or selector-picked element. Compatible with nested scrolling areas (e.g. overflows). Tested on:
+
+- IE 9
 - IE 10
+- IE 11
+- Edge 15
+- Firefox 55
+- Chrome 60
+- Opera 47
+- Safari 5.1 9.1
 
-# Scroll Tracking Google Analytics & GTM Plugin
+To get started, install the script in your project and set up a tracker.
 
-Plug-and-play, dependency-free scroll tracking for Google Analytics or Google Tag Manager. Can be customized for custom percentages, custom pixel lengths, and element-based tracking. It will detect if GTM, Universal Analytics, or Classic Analytics is installed on the page, in that order, and use the first syntax it matches unless configured otherwise. It include support for delivering hits directly to Universal or Classic Google Analytics, or for pushing Data Layer events to be used by Google Tag Manager.
+    var tracker = window.ScrollTracker();
 
-Once installed, the plugin will fire events with the following settings:
+Then register a handler on the scrolling events you'd like to observe.
 
-- Event Category: Scroll Tracking
-- Event Action: *&lt;Scroll Percentage or Pixel Depth&gt;*
-- Event Label: *&lt;Page Path&gt;*
+    tracker.on({
+      percentages: {
+        every: [25]
+      }
+    }, function(evt) {
 
-Marker locations are refreshed every time the listener is called, so dynamic content should be trackable out of the box. Once a marker has been tracked, it is blocked from firing on subsequent checks. Tracking does not account for the starting position of the viewport; if the browser loads the viewport at the bottom of the page and the user triggers a scroll event, all percentages up to that point in the document will be tracked.
+      console.log(evt.data.label); // > "25%"
+      console.log(evt.data.depth); // > 500
+
+    });
+
+Additional handlers can be added at any time to additional measurements or measurements that already have a handler.
+
+    tracker.on({
+      percentages: {
+        every: [25]
+      },
+      elements: {
+        each: ['.header', '.footer']
+      }
+    }, someNewHandler);
+
+When a tracker is no longer required it can be destroyed by calling `.destroy()`.
+
+    tracker.destroy();
+
+# Google Tag Manager Plugin
+
+A pre-build Google Tag Manager container is included in the repository for download to import tracking into Google Tag Manager. The file is named luna-gtm-scroll-tracker.json.
 
 ## Installation & Documentation
 
@@ -22,19 +54,6 @@ For installation instructions and complete documentation, visit [http://www.luna
 ## License
 
 Licensed under the MIT License. For the full text of the license, view the LICENSE.MD file included with this repository.
-
-## Browser Support
-
-This library supports all features and is tested on the following browsers:
-- IE8
-- IE9
-- IE10
-- IE11
-- Edge
-- Chrome
-- Firefox
-- Opera
-- Safari
 
 ## Acknowledgements
 
