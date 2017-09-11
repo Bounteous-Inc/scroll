@@ -1,3 +1,6 @@
+/*
+ * @TODO add task for updating container
+ */
 var fs = require('fs');
 var jsBeautify = require('js-beautify').js_beautify;
 
@@ -15,7 +18,6 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     jshint: {
-      // files: ['./src/*.js'],
       ignore_warning: {
         options: {
           '-W030': true,
@@ -26,26 +28,18 @@ module.exports = function(grunt) {
     },
     uglify: {
       options: {
-        footer: footer 
+        footer: '\r\n' + footer
       },
       build: {
-        src: './src/lunametrics-scroll-tracking.gtm.js',
-        dest: './lunametrics-scroll-tracking.gtm.min.js'
+        src: './src/scroll-tracker.js',
+        dest: './scroll-tracker.min.js'
       }
     },
-    fixConfig: {
+    appendFooter: {
       options: {
         build: {
-          src: './lunametrics-scroll-tracking.gtm.min.js',
-          dest: './lunametrics-scroll-tracking.gtm.min.js'
-        }
-      }
-    },
-    prependFooter: {
-      options: {
-        build: {
-          src: './src/lunametrics-scroll-tracking.gtm.js',
-          dest: './lunametrics-scroll-tracking.gtm.js'
+          src: './src/scroll-tracker.js',
+          dest: './scroll-tracker.js'
         },
         footer: footer
       }
@@ -53,8 +47,8 @@ module.exports = function(grunt) {
     updateContainer: {
       options: {
         build: {
-          src: './lunametrics-scroll-tracking.gtm.js',
-          dest: './luna-scroll-tracking.json'
+          src: './scroll-tracker.js',
+          dest: './luna-gtm-scroll-tracker.json'
         }
       }
     }
@@ -63,32 +57,19 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
 
-  grunt.registerTask('fixConfig', ['Reformat config argument for readability'], function() {
+  grunt.registerTask('appendFooter', ['append credits to footer'], function() {
 
     var options = this.options();
     var data = fs.readFileSync(options.build.src, 'utf-8');
-    var minifiedConfig = data.split('/*')[0].match(/\(.*?\)/g).pop();
-    var config = minifiedConfig.replace(/!0/g, 'true').replace(/!1/g, 'false');
-    var beautifiedConfig = jsBeautify(config);
-    var data = data.replace(minifiedConfig, '\n' + beautifiedConfig);
-    fs.writeFileSync(options.build.dest, data);  
-    console.log('Appended properly formatted config to end of minified script');
-
-  });
-
-  grunt.registerTask('prependFooter', ['Prepend credits to footer'], function() {
-
-    var options = this.options();
-    var data = fs.readFileSync(options.build.src, 'utf-8');  
     fs.writeFileSync(options.build.dest, data + options.footer);
-    console.log('Prepended footer to unminifed script');
+    console.log('appended footer to unminifed script');
 
   });
 
-  grunt.registerTask('updateContainer', ['Updating container import file'], function() {
+  /*grunt.registerTask('updateContainer', ['Updating container import file'], function() {
 
     var options = this.options();
-    var oldContainer = require(options.build.dest);    
+    var oldContainer = require(options.build.dest);
     var newScript = fs.readFileSync(options.build.src, 'utf-8');
     var oldTag,
         oldParameter,
@@ -114,15 +95,15 @@ module.exports = function(grunt) {
       }
 
     }
-   
+
     oldContainer.containerVersion.tag[oldTag].parameter[oldParameter].value = '<script type="text/javascript" id="gtm-scroll-tracking">\n' +
       newScript +
       '\n</script>';
-   
+
     fs.writeFileSync(options.build.dest, jsBeautify(JSON.stringify(oldContainer)));
 
-  });
+  });*/
 
-  grunt.registerTask('default', ['jshint', 'prependFooter', 'uglify', 'fixConfig', 'updateContainer']);
+  grunt.registerTask('default', ['jshint', 'appendFooter', 'uglify', /*'updateContainer'*/]);
 
 };
