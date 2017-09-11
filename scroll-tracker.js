@@ -376,9 +376,9 @@
    */
   ScrollTracker.prototype._contextHeight = function() {
 
-    if (this._context !== document.body) return this._context.scrollHeight;
+    if (this._context !== document.body) return this._context.scrollHeight - 5;
 
-    return this._context.clientHeight;
+    return this._context.clientHeight - 5;
 
   };
 
