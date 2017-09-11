@@ -45,7 +45,7 @@ When a tracker is no longer required it can be destroyed by calling `.destroy()`
 
 # Google Tag Manager Plugin
 
-A pre-build Google Tag Manager container is included in the repository for download to import tracking into Google Tag Manager. The file is named luna-gtm-scroll-tracker.json.
+A pre-build Google Tag Manager container is included in the repository for download to import tracking into Google Tag Manager. The file is named luna-scroll-tracking.json.
 
 ## Installation & Documentation
 
