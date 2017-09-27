@@ -366,6 +366,8 @@
   ScrollTracker.prototype.reset = function() {
 
     this._tracked = {};
+    delete this._marks;
+    this.marks = {};
 
   };
 
@@ -443,6 +445,7 @@
 
   /**
    * @constructor
+   * @private
    *
    * @param {object} config
    * @param {string} config.label
