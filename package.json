@@ -1,6 +1,6 @@
 {
   "name": "scroll-tracking-google-analytics",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Plug-and-play context-aware scroll tracking with no dependencies.",
   "main": "Gruntfile.js",
   "scripts": {

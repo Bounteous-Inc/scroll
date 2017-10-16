@@ -649,7 +649,7 @@
 
 })(this);
 /*
- * v2.0.1
+ * v2.0.2
  * Created by the Google Analytics consultants at http://www.lunametrics.com/
  * Written by @notdanwilkerson
  * Documentation: https://github.com/lunametrics/gascroll/
