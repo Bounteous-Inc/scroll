@@ -76,33 +76,32 @@ describe('scroll-tracker', function(){
         "nested": {
           ".nested-every[0]": 0,
           "10px": 10,
-          "10%": 40,
+          "10%": 39,
           "90px": 90,
-          "25%": 100,
+          "25%": 98,
           "100px": 100,
-          "50%": 200,
+          "50%": 197,
           "200px": 200,
           ".nested-every[1]": 200,
-          "75%": 300,
+          "75%": 296,
           "300px": 300,
-          "90%": 360,
-          "100%": 400,
-          "400px": 400
+          "90%": 355,
+          "100%": 395
         },
         "normal": {
           "10px": 10,
           "90px": 90,
-          "10%": 190,
-          "25%": 475,
-          "50%": 950,
+          "10%": 189,
+          "25%": 473,
+          "50%": 947,
           "1000px": 1000,
           ".every[0]": 1000,
           "#each": 1200,
           ".every[1]": 1300,
-          "75%": 1425,
+          "75%": 1421,
           ".every[2]": 1500,
-          "90%": 1710,
-          "100%": 1900
+          "90%": 1705,
+          "100%": 1895
         }
       };
 
@@ -130,12 +129,12 @@ describe('scroll-tracker', function(){
       var passed = {};
 
       var outcome = {
-        '10%': 100,
-        '25%': 250,
-        '50%': 500,
-        '75%': 750,
-        '90%': 900,
-        '100%': 1000
+        '10%': 99,
+        '25%': 248,
+        '50%': 497,
+        '75%': 746,
+        '90%': 895,
+        '100%': 995
       };
 
       tracker.on({
@@ -222,6 +221,33 @@ describe('scroll-tracker', function(){
     });
 
   });
+
+	describe('reset()', function() {
+
+		it ('should reset the internal marks', function() {
+
+			var tracker = ScrollTracker();
+			var events = [];
+		
+			tracker.on({
+				percentages: {
+					each: [10]
+				}
+			}, function(evt) {
+
+				events.push(evt);
+
+			});
+
+      window.scrollTo(0, 1000);
+
+      expect(events.length).toBe(1);
+      tracker.reset();
+      expect(events.length).toBe(2);
+
+		});
+
+	});
 
   describe('minHeight', function() {
 
@@ -331,6 +357,7 @@ describe('scroll-tracker', function(){
     });
 
   });
+
 
 });
 

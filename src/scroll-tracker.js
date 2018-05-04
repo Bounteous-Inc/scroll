@@ -366,8 +366,9 @@
   ScrollTracker.prototype.reset = function() {
 
     this._tracked = {};
-    delete this._marks;
-    this.marks = {};
+    this._marks = {};
+
+		this._update();
 
   };
 

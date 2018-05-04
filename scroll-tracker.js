@@ -366,8 +366,9 @@
   ScrollTracker.prototype.reset = function() {
 
     this._tracked = {};
-    delete this._marks;
-    this.marks = {};
+    this._marks = {};
+
+		this._update();
 
   };
 
@@ -649,7 +650,7 @@
 
 })(this);
 /*
- * v2.0.2
+ * v2.0.3
  * Created by the Google Analytics consultants at http://www.lunametrics.com/
  * Written by @notdanwilkerson
  * Documentation: https://github.com/lunametrics/gascroll/
