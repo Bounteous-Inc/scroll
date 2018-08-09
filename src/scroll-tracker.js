@@ -403,7 +403,7 @@
 
         depth = (window.pageYOffset ||
           document.documentElement.scrollTop ||
-          document.body.scrollTop || 0);
+          document.body.scrollTop || 0) - this._fromTop;
 
       } else {
 
@@ -579,7 +579,7 @@
    */
   function getNodeDistanceFromTop(node) {
 
-    var nodeTop = node.getBoundingClientRect().top;
+    var nodeTop = node.getBoundingClientRect().top - (node.scrollHeight - node.clientHeight) / 2;
     // @link https://developer.mozilla.org/en-US/docs/Web/API/Window/scrollX
     var docTop = (window.pageYOffset !== undefined) ?
       window.pageYOffset :

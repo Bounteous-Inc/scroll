@@ -127,7 +127,7 @@ describe('scroll-tracker', function(){
         context: '.spacer'
       });
       var passed = {};
-
+      // @FIXME PhantomJS gets different heights than Chrome
       var outcome = {
         '10%': 99,
         '25%': 248,
